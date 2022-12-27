@@ -60,8 +60,8 @@ class Product(DateMixin, SlugMixin):
         self.slug = Generator.create_slug_shortcode(size=10, model_=Product)
         super(Product, self).save(*args, **kwargs)
 
-    def total_price(self):
-        return self.price + (self.tax or 0) - (self.discount or 0)
+    # def total_price(self):
+    #     return self.price + (self.tax or 0) - (self.discount or 0)
 
 
 

@@ -898,46 +898,57 @@
                             <div class="sidebar-content scrollable">
                                 <!-- Start of Sticky Sidebar -->
                                 <div class="sticky-sidebar">
-                                    <div class="filter-actions">
-                                        <label>Filter :</label>
-                                        <a href="#" class="btn btn-dark btn-link filter-clean">Clean All</a>
-                                    </div>
-                                    <!-- Start of Collapsible widget -->
-                                    <div class="widget widget-collapsible">
-                                        <h3 class="widget-title"><label>All Categories</label></h3>
-                                        <ul class="widget-body filter-items search-ul">
-                                            {% for category in categories %}
-                                                <li><a href="#">{{ category.name }}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                    <!-- End of Collapsible Widget -->
-
-                                    <!-- Start of Collapsible Widget -->
-                                    <div class="widget widget-collapsible">
-                                        <h3 class="widget-title"><label>Price</label></h3>
-                                        <div class="widget-body">
-                                            <form class="price-range">
-                                                <input type="number" name="min_price" class="min_price text-center"
-                                                    placeholder="$min"><span class="delimiter">-</span><input
-                                                    type="number" name="max_price" class="max_price text-center"
-                                                    placeholder="$max"><a href="#"
-                                                    class="btn btn-primary btn-rounded">Go</a>
-                                            </form>
+                                    <form>
+                                        <div class="filter-actions">
+                                            <label>Filter :</label>
+                                            <a href="#" class="btn btn-dark btn-link filter-clean">Clean All</a>
                                         </div>
-                                    </div>
-                                    <!-- End of Collapsible Widget -->
+                                        <!-- Start of Collapsible widget -->
+                                        <div class="widget widget-collapsible">
+                                            <h3 class="widget-title"><label>All Categories</label></h3>
+                                            <ul class="widget-body filter-items search-ul">
+                                                {% for category in categories %}
+                                                    <p style="font-size: 16px;">
+                                                        <input type="checkbox" name="category" value="{{ category.id }}"
+                                                        {% if category.id in query_params.filter_categories %}checked{% endif %}>  {{ category.name }}
+                                                    </p>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <!-- End of Collapsible Widget -->
 
-                                    <!-- Start of Collapsible Widget -->
-                                    <div class="widget widget-collapsible">
-                                        <h3 class="widget-title"><label>Size</label></h3>
-                                        <ul class="widget-body filter-items item-check mt-1">
-                                            {% for size in sizes %}
-                                            <li><a href="#">{{ size.name }}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                    <!-- End of Collapsible Widget -->
+                                        <!-- Start of Collapsible Widget -->
+                                        <div class="widget widget-collapsible">
+                                            <h3 class="widget-title"><label>Price</label></h3>
+                                            <div class="widget-body">
+
+                                                    <input type="number" name="min_price" class="min_price text-center form-control"
+                                                           {% if query_params.min_price %}value="{{ query_params.min_price }}"{% endif %}
+                                                        placeholder="$min"><span class="delimiter">-</span><input
+                                                        type="number" name="max_price" class="max_price text-center form-control"
+                                                        {% if query_params.max_price %}value="{{ query_params.max_price }}"{% endif %}
+                                                        placeholder="$max">
+
+                                            </div>
+                                        </div>
+                                        <!-- End of Collapsible Widget -->
+
+                                        <!-- Start of Collapsible Widget -->
+                                        <div class="widget widget-collapsible">
+                                            <h3 class="widget-title"><label>Size</label></h3>
+                                            <ul class="widget-body filter-items mt-1">
+                                                {% for size in sizes %}
+                                                <p style="font-size: 16px;">
+                                                        <input type="checkbox" name="size" value="{{ size.id }}"
+                                                        {% if size.id in query_params.filter_sizes %}checked{% endif %}>  {{ size.name }}
+                                                </p>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <!-- End of Collapsible Widget -->
+
+                                        <button class="btn btn-success">Davay getdiy</button>
+                                    </form>
                                 </div>
                                 <!-- End of Sidebar Content -->
                             </div>
@@ -1030,26 +1041,39 @@
 
                             <div class="toolbox toolbox-pagination justify-content-between">
                                 <p class="showing-info mb-2 mb-sm-0">
-                                    Showing<span>1-12 of 60</span>Products
+                                    Showing<span>{{ products.number }}-{{ paginator.num_pages }} of {{ products_count }}</span>Products
                                 </p>
+
+
+                            {% if paginator.num_pages > 1 %}
                                 <ul class="pagination">
+                                    {% if products.has_previous %}
                                     <li class="prev disabled">
-                                        <a href="#" aria-label="Previous" tabindex="-1" aria-disabled="true">
+                                        <a href="?page={{ products.previous_page_number }}" aria-label="Previous" tabindex="-1" aria-disabled="true">
                                             <i class="w-icon-long-arrow-left"></i>Prev
                                         </a>
                                     </li>
-                                    <li class="page-item active">
-                                        <a class="page-link" href="#">1</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#">2</a>
-                                    </li>
+                                    {% endif %}
+                                    {% for i in products.paginator.page_range %}
+                                        {% if products.number == i %}
+                                            <li class="page-item active">
+                                                <a class="page-link" href="?page={{ i }}">
+                                                {{ i }}
+                                                </a>
+                                            </li>
+                                        {% elif products.number != i %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if products.has_next %}
                                     <li class="next">
-                                        <a href="#" aria-label="Next">
+                                        <a href="?page={{ products.next_page_number }}" aria-label="Next">
                                             Next<i class="w-icon-long-arrow-right"></i>
                                         </a>
                                     </li>
+                                    {% endif %}
                                 </ul>
+                            {% endif %}
                             </div>
                         </div>
                         <!-- End of Shop Main Content -->
