@@ -5,8 +5,11 @@ from services.mixin import DateMixin, SlugMixin
 from services.uploader import Uploader
 from services.generator import Generator
 from services.choices import SIZES
+from django.contrib.auth import get_user_model
 
 # Create your models here.
+
+User = get_user_model()
 
 class Size(DateMixin):
     name = models.CharField(max_length=200, choices=SIZES)
@@ -40,6 +43,7 @@ class Category(MPTTModel, DateMixin, SlugMixin):
 
 
 class Product(DateMixin, SlugMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     description = RichTextField()

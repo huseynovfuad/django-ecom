@@ -1049,25 +1049,21 @@
                                 <ul class="pagination">
                                     {% if products.has_previous %}
                                     <li class="prev disabled">
-                                        <a href="?page={{ products.previous_page_number }}" aria-label="Previous" tabindex="-1" aria-disabled="true">
+                                        <a href="?page={{ products.previous_page_number }}&{{ query_params }}" aria-label="Previous" tabindex="-1" aria-disabled="true">
                                             <i class="w-icon-long-arrow-left"></i>Prev
                                         </a>
                                     </li>
                                     {% endif %}
                                     {% for i in products.paginator.page_range %}
-                                        {% if products.number == i %}
-                                            <li class="page-item active">
-                                                <a class="page-link" href="?page={{ i }}">
+                                            <li class="page-item {% if products.number == i %}active{% endif %}">
+                                                <a class="page-link" href="?page={{ i }}&{{ query_params }}">
                                                 {{ i }}
                                                 </a>
                                             </li>
-                                        {% elif products.number != i %}
-                                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                                        {% endif %}
                                     {% endfor %}
                                     {% if products.has_next %}
                                     <li class="next">
-                                        <a href="?page={{ products.next_page_number }}" aria-label="Next">
+                                        <a href="?page={{ products.next_page_number }}&{{ query_params }}" aria-label="Next">
                                             Next<i class="w-icon-long-arrow-right"></i>
                                         </a>
                                     </li>
