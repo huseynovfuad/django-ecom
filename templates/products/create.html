@@ -8,6 +8,32 @@
   </head>
   <body class="text-center row">
     <h1>Welcome, {{ request.user.username }}</h1>
+    {% if messages %}
+        {% for message in messages %}
+
+        <div class="alert alert-{{ message.tags }}" role="alert">
+
+          {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if form.errors %}
+                                        <div class="error-message mb-4">
+                                                {% for field in form %}
+                                                    {% for error in field.errors %}
+                                                        <div class="alert alert-danger" role="alert">
+                                                              {{ error|escape }}
+                                                            </div>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                                {% for error in form.non_field_errors %}
+                                                    <div class="alert alert-danger" role="alert">
+                                                              {{ error|escape }}
+                                                            </div>
+                                                {% endfor %}
+                                        </div>
+                                {% endif %}
 
     <div class="col-3"></div>
     <form method="POST" class="col-6">

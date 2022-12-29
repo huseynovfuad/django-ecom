@@ -6,6 +6,7 @@ from services.uploader import Uploader
 from services.generator import Generator
 from services.choices import SIZES
 from django.contrib.auth import get_user_model
+from .validators import name_validator
 
 # Create your models here.
 
@@ -45,7 +46,7 @@ class Category(MPTTModel, DateMixin, SlugMixin):
 class Product(DateMixin, SlugMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, validators=[name_validator])
     description = RichTextField()
     price = models.FloatField()
     tax = models.FloatField(blank=True, null=True)

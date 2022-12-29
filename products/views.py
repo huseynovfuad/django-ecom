@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import (
     Product, ProductImage, Size, Category
 )
@@ -7,6 +7,7 @@ from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from services.filter import ProductFilter
 from .forms import ProductForm
+from django.contrib import messages
 
 # Create your views here.
 
@@ -40,11 +41,14 @@ def product_list_view(request):
 
 def product_create_view(request):
     context = {}
-    form = ProductForm(initial={"name": "Fuad"})
+    form = ProductForm()
 
-    print(request.GET)
     if request.method == "POST":
-        print(request.POST)
+        form = ProductForm(request.POST or None)
+        if form.is_valid():
+            new_product = form.save()
+            messages.success(request, f"{new_product.name} added!")
+            return redirect("products:create")
 
     context["form"] = form
     return render(request, "products/create.html", context)
