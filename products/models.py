@@ -7,6 +7,7 @@ from services.generator import Generator
 from services.choices import SIZES
 from django.contrib.auth import get_user_model
 from .validators import name_validator
+from PIL import Image
 
 # Create your models here.
 
@@ -39,7 +40,8 @@ class Category(MPTTModel, DateMixin, SlugMixin):
         verbose_name_plural = "Categories"
 
     def save(self, *args, **kwargs):
-        self.slug = Generator.create_slug_shortcode(size=10, model_=Category)
+        if not self.slug:
+            self.slug = Generator.create_slug_shortcode(size=10, model_=Category)
         super(Category, self).save(*args, **kwargs)
 
 
@@ -62,7 +64,8 @@ class Product(DateMixin, SlugMixin):
         verbose_name_plural = "Products"
 
     def save(self, *args, **kwargs):
-        self.slug = Generator.create_slug_shortcode(size=10, model_=Product)
+        if not self.slug:
+            self.slug = Generator.create_slug_shortcode(size=10, model_=Product)
         super(Product, self).save(*args, **kwargs)
 
     # def total_price(self):
@@ -83,6 +86,14 @@ class ProductImage(DateMixin, SlugMixin):
         verbose_name_plural = "Product Images"
 
     def save(self, *args, **kwargs):
-        self.slug = Generator.create_slug_shortcode(size=10, model_=ProductImage)
+        if not self.slug:
+            self.slug = Generator.create_slug_shortcode(size=10, model_=ProductImage)
+        if not self.image:
+            img = Image.open(self.image.path)
+            if img.height > 300 or img.width > 300:
+                new_img = (300, 300)
+                img.thumbnail(new_img)
+                img.save(self.image.path)
+
         super(ProductImage, self).save(*args, **kwargs)
 

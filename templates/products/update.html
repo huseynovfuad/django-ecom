@@ -52,10 +52,18 @@
         <hr>
         <div class="row">
             <h3 class="mb-4">Images</h3>
-            <span id="imagesDiv" class="mb-3 row">
+            <input type="hidden" name="delete_image_ids" id="delete_image_ids">
+            <span id="imagesShow" class="row">
+                {% for productimage in product.productimage_set.all %}
+                    <div class="col-4" id="productImageDiv-{{ productimage.id }}">
+                        <img src="{{ productimage.image.url }}" alt="" style="width: 200px; height: 200px;">
+                        <a onclick="deleteImageObj('{{ productimage.id }}')" class="btn btn-warning">X</a>
+                    </div>
+                {% endfor %}
+            </span>
+            <span id="imagesDiv" class="my-5">
                 <div class="col-4">
                     <input type="file" name="image">
-                    <br>
                     <a class="btn btn-danger" onclick="deleteImage(this)">Delete</a>
                 </div>
             </span>
@@ -72,21 +80,35 @@
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
     <script>
+        let image_num = {{ product.productimage_set.count }}
+            console.log(image_num)
+
         $("#plusBtn").click(function (){
             let image_inputs_length = $("input[name='image']").length
-            if(image_inputs_length < 3){
+            if(image_inputs_length < 3 - image_num){
                 $("#imagesDiv").append(`
                     <div class="col-4">
                         <input type="file" name="image">
-                            <a class="btn btn-danger" onclick="deleteImage(this)">Delete</a>
+                        <a class="btn btn-danger" onclick="deleteImage(this)">Delete</a>
                     </div>
                 `)
             }
         })
 
-
         function deleteImage(el){
             $(el).parent().remove();
+        }
+
+
+        function deleteImageObj(id){
+            $("#productImageDiv-"+id).remove()
+            let deleted_ids = id
+            if($("#delete_image_ids").val()){
+                deleted_ids = $("#delete_image_ids").val() + "," +id
+            }
+            $("#delete_image_ids").val(deleted_ids)
+            console.log($("#delete_image_ids").val())
+            image_num -= 1
         }
     </script>
   </body>
