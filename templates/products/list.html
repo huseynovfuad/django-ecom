@@ -1,4 +1,5 @@
 {% load static %}
+{% load change_format %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1029,8 +1030,14 @@
                                                 <a href="product-default.html" class="rating-reviews">(3 reviews)</a>
                                             </div>
                                             <div class="product-pa-wrapper">
-                                                <div class="product-price">
-                                                    {{ product.total_price }} AZN
+                                                <div class="product-price text-muted">
+                                                    {% if forloop.counter|divisibleby:2 %} {{ forloop.counter }} {% endif %}
+                                                    {{ product.created_at|date:"d F Y" }}
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <div class="product-price mt-4">
+                                                    {{ product.total_price|formatize }} AZN
                                                 </div>
                                             </div>
                                         </div>

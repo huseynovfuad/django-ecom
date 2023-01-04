@@ -24,7 +24,7 @@ def product_list_view(request):
 
     products, query_params = ProductFilter(request, products, query_params).filter_products()
 
-    paginator = Paginator(products, 1)
+    paginator = Paginator(products, 10)
     page = request.GET.get("page", 1)
     product_list = paginator.get_page(page)
 
