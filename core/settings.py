@@ -29,7 +29,8 @@ INSTALLED_APPS = [
 
     # django apps
     "products",
-    
+    "accounts",
+
     #third party apps
     "ckeditor"
 ]

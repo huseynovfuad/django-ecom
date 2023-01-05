@@ -9,3 +9,7 @@ class Uploader:
     @staticmethod
     def upload_images_to_categories(instance, filename):
         return f"categories/{instance.slug}/{filename}"
+
+    @staticmethod
+    def upload_images_to_profile(instance, filename):
+        return f"profiles/{instance.slug}/{filename}"
