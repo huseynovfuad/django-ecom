@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import (
-    Product, ProductImage, Size, Category
+    Product, ProductImage, Size, Category, Comment
 )
 from django.db.models import F, FloatField
 from django.db.models.functions import Coalesce
@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from services.filter import ProductFilter
 from .forms import ProductForm
 from django.contrib import messages
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -93,3 +94,37 @@ def product_update_view(request, slug):
     context['product'] = product
     context['form'] = form
     return render(request, "products/update.html", context)
+
+
+
+def product_detail_view(request, slug):
+    context = {}
+    product = get_object_or_404(Product, slug=slug)
+    comments = Comment.objects.filter(product=product,parent__isnull=True)
+    context["product"] = product
+    context["comments"] = comments
+    return render(request, "products/detail.html", context)
+
+
+
+def add_comment_view(request):
+    product_id = request.POST.get("product_id", None)
+    comment_id = request.POST.get("comment_id", None)
+    comment = request.POST.get("comment", None)
+
+
+    comment_obj = Comment(
+        user=request.user, product=get_object_or_404(Product, id=int(product_id)),
+        comment=comment
+    )
+    if comment_id:
+        comment_obj.parent = get_object_or_404(Comment, id=int(comment_id))
+    comment_obj.save()
+
+    data = {
+        "user": request.user.email,
+        "comment": comment,
+        "comment_id": comment_id
+    }
+
+    return JsonResponse(data)

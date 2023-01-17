@@ -97,3 +97,19 @@ class ProductImage(DateMixin, SlugMixin):
 
         super(ProductImage, self).save(*args, **kwargs)
 
+
+
+class Comment(MPTTModel, DateMixin):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    comment = models.TextField()
+
+    def __str__(self):
+        return f"{self.user.email} --> {self.product.name}"
+
+    class Meta:
+        ordering = ("-created_at", )
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
+
