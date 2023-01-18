@@ -128,3 +128,17 @@ def add_comment_view(request):
     }
 
     return JsonResponse(data)
+
+
+
+def wishlist_create_view(request):
+    data = {}
+    product_obj = get_object_or_404(Product, id=int(request.POST.get("product_id")))
+
+    data["success"] = True
+    if request.user in product_obj.wishlist.all():
+        product_obj.wishlist.remove(request.user)
+        data["success"] = False
+    else:
+        product_obj.wishlist.add(request.user)
+    return JsonResponse(data)

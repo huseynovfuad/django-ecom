@@ -49,6 +49,7 @@ class Product(DateMixin, SlugMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, validators=[name_validator])
+    wishlist = models.ManyToManyField(User, blank=True, related_name="wishlist")
     description = RichTextField()
     price = models.FloatField()
     tax = models.FloatField(blank=True, null=True)
