@@ -17,6 +17,7 @@ from .decorators import is_owner
 
 @login_required(login_url="accounts:login")
 def product_list_view(request):
+    # print(request.META["HTTP_X_FORWARDED_FOR"])
     context, query_params = {}, ""
     products = Product.objects.annotate(
             tax_price=Coalesce(F("tax"), 0, output_field=FloatField())
