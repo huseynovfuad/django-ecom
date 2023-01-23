@@ -9,9 +9,13 @@ from services.filter import ProductFilter
 from .forms import ProductForm
 from django.contrib import messages
 from django.http import JsonResponse
+from django.views import View
+from django.contrib.auth.decorators import login_required
+from .decorators import is_owner
 
 # Create your views here.
 
+@login_required(login_url="accounts:login")
 def product_list_view(request):
     context, query_params = {}, ""
     products = Product.objects.annotate(
@@ -63,6 +67,7 @@ def product_create_view(request):
     return render(request, "products/create.html", context)
 
 
+@is_owner
 def product_update_view(request, slug):
     context = {}
     product = get_object_or_404(Product, slug=slug)
@@ -142,3 +147,39 @@ def wishlist_create_view(request):
     else:
         product_obj.wishlist.add(request.user)
     return JsonResponse(data)
+
+
+
+class ProductCreateView(View):
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        form = ProductForm()
+        context["form"] = form
+        return render(request, "products/create.html", context)
+
+    def post(self, request, *args, **kwargs):
+        print("POST DATA: ", request.POST)
+        print("FILES DATA: ", request.FILES)
+        form = ProductForm(request.POST or None)
+        files = request.FILES.getlist("image")
+        if form.is_valid() and len(files) >= 1:
+            new_product = form.save()
+            for file in files:
+                ProductImage.objects.create(
+                    product=new_product,
+                    image=file
+                )
+            messages.success(request, f"{new_product.name} added!")
+        return redirect("products:create")
+
+
+from django.views.generic import ListView
+
+class ProductListView(ListView):
+    queryset = Product.objects.order_by("-created_at")
+    context_object_name = "products"
+    template_name = "products/list2.html"
+
+    def get_queryset(self):
+        return Product.objects.filter(user=self.request.user)

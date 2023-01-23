@@ -14,12 +14,15 @@ User = get_user_model()
 def login_view(request):
     context = {}
     form = LoginForm()
+    next = request.GET.get("next", None)
 
     if request.method == "POST":
         form = LoginForm(request.POST or None)
         if form.is_valid():
             user = User.objects.get(email=form.cleaned_data.get("email"))
             login(request, user)
+            if next:
+                return redirect(next)
             return redirect("/")
 
     context["form"] = form
