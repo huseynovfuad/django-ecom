@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     "accounts",
 
     #third party apps
-    "ckeditor"
+    "ckeditor",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
