@@ -2,11 +2,22 @@ from rest_framework import generics
 from rest_framework.response import Response
 from .serializers import ProductSerializer, ProductCreateSerializer
 from ..models import Product
+from .filters import ProductFilter
+from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
+from .paginations import CustomPagination
+from rest_framework.permissions import IsAuthenticated
+from .permissions import ReadOnly
+
 
 
 class ProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
+    pagination_class = CustomPagination
+    permission_classes = (ReadOnly, )
 
 
 class ProductCreateView(generics.CreateAPIView):
